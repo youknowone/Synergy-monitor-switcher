@@ -1,13 +1,17 @@
 #!/bin/sh
 
-synergys -f --debug INFO  --config /path/to//synergy.conf --enable-crypto | while read line; do
+SYNERGY_SERVER=/Applications/Synergy.app/Contents/MacOS/synergys
+SYNERGY_CONFIG=~/Library/Application\ Support/Synergy/Synergy/LastConfig.cfg
+# use this one to pass --name or other arguments
+SYNERGY_FLAGS=''
+
+"${SYNERGY_SERVER}" -f --debug INFO --config "${SYNERGY_CONFIG}" ${SYNERGY_FLAGS} --enable-crypto | while read line; do
   if echo $line | grep entering; then
     echo mouse is back
-    sudo ddccontrol -r 0x60 -w 14 dev:/dev/i2c-0
+    ~/bin/m1ddc set input 15
   fi
   if echo $line | grep leaving; then
     echo mouse just left
-    sudo ddccontrol -r 0x60 -w 25 dev:/dev/i2c-0
+    ~/bin/m1ddc set input 16
   fi
-
 done
